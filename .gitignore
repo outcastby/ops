@@ -25,4 +25,4 @@ ext-*.tar
 /log/
 .idea
 ops.iml
-
+/tmp

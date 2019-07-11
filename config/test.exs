@@ -11,6 +11,7 @@ config :ops, :ops,
     token: "slack_token",
     channel: "slack_channel"
   ],
+  check_restart_timeout: 1,
   available_environments: ["staging", "uat", "prod", "stable"],
   auto_build_branches: ["develop", "dev", "master", "release", "hotfix"],
   do_access_token: "token"

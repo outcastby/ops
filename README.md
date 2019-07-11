@@ -36,11 +36,12 @@ config :my_app, :ops, [
   ],
   build_info: [
     file_name: "build_file.json",
-     server_path: "https://example.com/info"
+    server_path: "https://example.com/info"
   ],
+  check_restart_timeout: 30,
   available_environments: ["staging", "uat", "prod", "stable"],
   auto_build_branches: ["develop", "dev", "master", "release", "hotfix"],
-  do_access_token: "token"
+  do_access_token: "token",
 ]
 ```
 
@@ -54,8 +55,9 @@ Description params:
 - available_environments - available environments for deploy on this environment server
 - auto_build_branches - branches which create docker build automatically
 - do_access_token - token for digital ocean(if use do cluster)
-- slack_token - token for slack, if you want send notification of start and end deploy
-- slack_channel - slack channel, where messages are sent
+- slack[token] - token for slack, if you want send notification of start and end deploy
+- slack[channel] - slack channel, where messages are sent
+- check_restart_timeout - [OPTIONAL (default 30s)] timeout between get list containers(pods)
 
 #### Examples
 
@@ -70,6 +72,9 @@ Build command:
  
 Destroy containers by version:
  - mix ops.destroy v0.1.0
+ 
+Fetch certificate:
+ - mix ops.fetch uat
  
 Start commands from last commit, if in last row on commit set command "build" and commands from available_environments, we handle this commands in deploy or build, "build" command available as default.
 Examples last row in commit message:

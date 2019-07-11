@@ -11,6 +11,7 @@ defmodule Mix.Tasks.Ops.Deploy do
   def run([env_name, image_tag, "-f"]), do: run([env_name, image_tag, true])
 
   def run([env_name, image_tag, is_fast]) do
+    HTTPoison.start()
     Ops.Utils.Io.puts("Deploy service #{Mix.Project.config()[:app]}. Environment=#{env_name}. Image=#{image_tag}")
 
     env_name
@@ -18,12 +19,6 @@ defmodule Mix.Tasks.Ops.Deploy do
     |> Deploy.BuildArgs.call(is_fast)
     |> Deploy.FindOrCreateBuild.call()
     |> Deploy.SendSlackNotification.call(:before)
-    |> exec_playbook()
-    |> Deploy.SendSlackNotification.call(:after)
-  end
-
-  defp exec_playbook(%{args: args} = context) do
-    "ansible-playbook" |> System.find_executable() |> Ops.Shells.Exec.call(args, [{:line, 4096}])
-    context
+    |> Deploy.Process.call()
   end
 end

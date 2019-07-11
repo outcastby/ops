@@ -27,7 +27,7 @@ defmodule Ops.MixProject do
     [
       {:timex, "~> 3.1"},
       {:jason, "~> 1.0"},
-      {:sdk, git: "https://github.com/outcastby/sdk"},
+      {:sdk, git: "https://github.com/outcastby/sdk.git"},
       {:mock, "0.3.3", only: :test}
     ]
   end
