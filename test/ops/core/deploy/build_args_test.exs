@@ -28,7 +28,7 @@ defmodule Ops.Deploy.BuildArgsTest do
                  "--extra-vars",
                  "env_name=uat image_tag=develop-test version= prev_image_tag= prev_version=",
                  "--skip-tags",
-                 "release"
+                 "fetch,release"
                ],
                env_name: "uat",
                prev_tag: nil,
@@ -59,7 +59,7 @@ defmodule Ops.Deploy.BuildArgsTest do
                  "--extra-vars",
                  "env_name=uat image_tag=develop-test version= prev_image_tag= prev_version=",
                  "--skip-tags",
-                 "release,job"
+                 "fetch,release,job"
                ],
                env_name: "uat",
                prev_tag: nil,
@@ -90,7 +90,7 @@ defmodule Ops.Deploy.BuildArgsTest do
                  "--extra-vars",
                  "env_name=prod image_tag=master-v0.2.0 version=v0.2 prev_image_tag=master-v0.1.0 prev_version=v0.1",
                  "--skip-tags",
-                 "job"
+                 "fetch,job"
                ],
                env_name: "prod",
                prev_tag: "master-v0.1.0",

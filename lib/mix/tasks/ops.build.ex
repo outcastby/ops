@@ -25,7 +25,7 @@ defmodule Mix.Tasks.Ops.Build do
   defp build_docker_image({image_name, _} = context) do
     @docker
     |> System.find_executable()
-    |> Ops.Shells.Exec.call(["build", "-f", Utils.Config.settings()[:docker_file], "-t", image_name, "."], [
+    |> Ops.Shells.Exec.call(["build", "-f", Utils.Config.settings()[:docker][:file], "-t", image_name, "."], [
       {:line, 4096}
     ])
 

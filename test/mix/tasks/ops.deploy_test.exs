@@ -3,10 +3,14 @@ defmodule Mix.Tasks.Ops.DeployTest do
   import Mock
 
   setup_with_mocks([
-    {Ops.Shells.Exec, [], [call: fn _, _, _ -> "" end]},
+    {Ops.Shells.Exec, [], [call: fn _, _, _ -> "" end, process_exit: fn _ -> "" end]},
+    {Ops.Shells.Exec, [], [call: fn _, _, _, _ -> "" end]},
+    {Ops.Utils.Kub, [],
+     [options: fn _ -> "" end, get_image: fn _, _ -> "image" end, get_containers: fn _, _ -> [] end]},
     {Ops.Sdk.DockerHub.Client, [], [tag_info: fn _ -> {:ok, ""} end]},
+    {Ops.Sdk.Slack.Client, [], [send: fn _ -> {:ok, ""} end]},
     {Ops.Sdk.DockerHub.Client, [], [user_login: fn _ -> {:ok, %{"token" => "fake"}} end]},
-    {Ops.Utils.Io, [], [puts: fn _ -> "" end]}
+    {Ops.Utils.Io, [:passthrough], [puts: fn _ -> "" end]}
   ]) do
     :ok
   end
@@ -28,7 +32,7 @@ defmodule Mix.Tasks.Ops.DeployTest do
                  "--extra-vars",
                  "env_name=uat image_tag=develop-test version= prev_image_tag= prev_version=",
                  "--skip-tags",
-                 "release"
+                 "fetch,release"
                ]
              }
     end
@@ -49,7 +53,7 @@ defmodule Mix.Tasks.Ops.DeployTest do
                  "--extra-vars",
                  "env_name=uat image_tag=develop-test version= prev_image_tag= prev_version=",
                  "--skip-tags",
-                 "release,job"
+                 "fetch,release,job"
                ]
              }
     end
@@ -102,7 +106,9 @@ defmodule Mix.Tasks.Ops.DeployTest do
                    "inventory",
                    "playbook.yml",
                    "--extra-vars",
-                   "env_name=prod image_tag=master-v0.2.0 version=v0.2 prev_image_tag=master-v0.1.0 prev_version=v0.1"
+                   "env_name=prod image_tag=master-v0.2.0 version=v0.2 prev_image_tag=master-v0.1.0 prev_version=v0.1",
+                   "--skip-tags",
+                   "fetch"
                  ]
                }
       end

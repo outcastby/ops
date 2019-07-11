@@ -4,7 +4,8 @@ defmodule Ops.Deploy.SendSlackNotification do
       before:
         ":warning: :warning: :warning: #{env_name} => #{Mix.Project.config()[:app]} => #{tag} => START DEPLOY :no_pedestrians:",
       after:
-        ":rocket: :rocket: :rocket: #{env_name} => #{Mix.Project.config()[:app]} => #{tag} => DELIVERED :muscle_left_anim: :deda: :muscle_right_anim:"
+        ":rocket: :rocket: :rocket: #{env_name} => #{Mix.Project.config()[:app]} => #{tag} => DELIVERED :muscle_left_anim: :deda: :muscle_right_anim:",
+      fail: ":bangbang: :bangbang: :bangbang: #{env_name} => #{Mix.Project.config()[:app]} => #{tag} => DEPLOY FAILED"
     }
   end
 

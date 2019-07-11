@@ -12,28 +12,19 @@ defmodule Ops.Deploy.BuildArgs do
           prev_version
         }"
       ]
-      |> skip_release_tag(context)
-      |> skip_job_tag(is_fast)
+      |> skip_tags(context, is_fast)
 
     %{context | args: args}
   end
 
-  def skip_release_tag(args, %{version: version, prev_version: prev_version, env_name: env_name})
-      when version == prev_version or env_name != "prod" do
-    Ops.Utils.Io.puts("Tag release is skipped")
-    args ++ ["--skip-tags", "release"]
-  end
+  def skip_tags(args, context, is_fast),
+    do: args ++ ["--skip-tags", ["fetch"] |> skip_release_tag(context) |> skip_job_tag(is_fast) |> Enum.join(",")]
 
-  def skip_release_tag(args, _), do: args
+  def skip_release_tag(tags, %{version: version, prev_version: prev_version, env_name: env_name})
+      when version == prev_version or env_name != "prod",
+      do: tags ++ ["release"]
 
-  def skip_job_tag(args, true) do
-    Ops.Utils.Io.puts("Job is skipped")
-
-    case Enum.find_index(args, &(&1 == "--skip-tags")) do
-      nil -> args ++ ["--skip-tags", "job"]
-      index -> List.replace_at(args, index + 1, "#{Enum.at(args, index + 1)},job")
-    end
-  end
-
-  def skip_job_tag(args, _), do: args
+  def skip_release_tag(tags, _), do: tags
+  def skip_job_tag(tags, true), do: tags ++ ["job"]
+  def skip_job_tag(tags, _), do: tags
 end
