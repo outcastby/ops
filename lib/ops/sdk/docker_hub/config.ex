@@ -9,7 +9,7 @@ defmodule Ops.Sdk.DockerHub.Config do
           url: "/users/login"
         },
         tag_info: %{
-          type: :post,
+          type: :get,
           url: &"/repositories/#{&1.repository}/tags/#{&1.tag}/"
         }
       }
