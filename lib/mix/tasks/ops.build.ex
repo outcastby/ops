@@ -44,6 +44,7 @@ defmodule Mix.Tasks.Ops.Build do
       Poison.encode!(%{
         image: %{
           name: image_name,
+          build_date: Timex.format!(Timex.now(), "{ANSIC}"),
           build_author: Ops.Shells.System.call("whoami")
         },
         commit: %{
