@@ -76,4 +76,73 @@ defmodule Ops.Deploy.ContextTest do
       end
     end
   end
+
+  describe ".current_server_state" do
+    test "prod environment with versions" do
+      with_mocks([
+        {Application, [:passthrough],
+         [
+           get_env: fn _, _, _ ->
+             [
+               docker: [
+                 username: "docker_user",
+                 password: "docker_pass",
+                 image_repository: "my_company/repo_name",
+                 file: "config/dockerfile"
+               ],
+               slack: [
+                 token: "slack_token",
+                 channel: "slack_channel"
+               ],
+               build_info: [
+                 file_name: "build_file.json",
+                 server_path: "https://example.com/info"
+               ],
+               available_environments: ["staging", "uat", "prod", "stable"],
+               auto_build_branches: ["develop", "dev", "master", "release", "hotfix"],
+               do_access_token: "token"
+             ]
+           end
+         ]},
+        {Ops.Shells.System, [:passthrough], [call: fn _, _ -> "{\"image\": {\"name\": \"master-v0.1.0\"}}" end]}
+      ]) do
+        result = Ops.Deploy.Context.current_server_state("prod")
+        assert result == {"v0.1", "master-v0.1.0"}
+      end
+    end
+
+    test "prod environment without versions" do
+      with_mocks([
+        {Application, [:passthrough],
+         [
+           get_env: fn _, _, _ ->
+             [
+               docker: [
+                 username: "docker_user",
+                 password: "docker_pass",
+                 image_repository: "my_company/repo_name",
+                 file: "config/dockerfile"
+               ],
+               slack: [
+                 token: "slack_token",
+                 channel: "slack_channel"
+               ],
+               build_info: [
+                 file_name: "build_file.json",
+                 server_path: "https://example.com/info"
+               ],
+               available_environments: ["staging", "uat", "prod", "stable"],
+               auto_build_branches: ["develop", "dev", "master", "release", "hotfix"],
+               do_access_token: "token",
+               skip_versions_of_containers: true
+             ]
+           end
+         ]},
+        {Ops.Shells.System, [:passthrough], [call: fn _, _ -> "{\"image\": {\"name\": \"master-v0.1.0\"}}" end]}
+      ]) do
+        result = Ops.Deploy.Context.current_server_state("prod")
+        assert result == {nil, nil}
+      end
+    end
+  end
 end

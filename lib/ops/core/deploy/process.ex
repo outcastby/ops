@@ -1,16 +1,15 @@
 defmodule Ops.Deploy.Process do
+  require IEx
   @check_timeout Ops.Utils.Config.settings()[:check_restart_timeout] || 30
 
   def call(%{args: args, env_name: env_name} = context) do
     Mix.Tasks.Ops.FetchCert.run([env_name])
-    name = get_name(context)
     options = Ops.Utils.Kub.options(env_name)
 
     info = %{
-      name: name,
+      name: get_name(context, :version),
       options: options,
-      image: Ops.Utils.Kub.get_image(options, name),
-      old_containers: Ops.Utils.Kub.get_containers(options, name)
+      image: Ops.Utils.Kub.get_image(options, get_name(context, :prev_version))
     }
 
     args
@@ -20,10 +19,12 @@ defmodule Ops.Deploy.Process do
     context
   end
 
-  def get_name(%{version: nil}), do: "#{Mix.Project.config()[:app]}"
-
-  def get_name(%{version: version}),
-    do: "#{Mix.Project.config()[:app]}#{String.replace(version, ".", "-")}"
+  def get_name(context, key) do
+    case Map.get(context, key) do
+      nil -> "#{Mix.Project.config()[:app]}"
+      version -> "#{Mix.Project.config()[:app]}#{String.replace(version, ".", "-")}"
+    end
+  end
 
   def exec_playbook(args, exit_on_error \\ false) do
     "ansible-playbook"
@@ -50,11 +51,12 @@ defmodule Ops.Deploy.Process do
       when prev_version != version,
       do: Mix.Tasks.Ops.Destroy.run([env_name, tag])
 
-  def revert_deploy(%{args: args, tag: tag}, %{
-        old_containers: [%{"spec" => %{"containers" => containers}} | _],
-        name: name
-      }) do
-    old_tag = containers |> Ops.Utils.Kub.find_container_image(name) |> String.split(":") |> List.last()
+  # if this is first deploy and image not exists
+  def revert_deploy(%{tag: tag, env_name: env_name}, %{image: nil}),
+    do: Mix.Tasks.Ops.Destroy.run([env_name, tag])
+
+  def revert_deploy(%{args: args, tag: tag}, %{image: image}) do
+    old_tag = image |> String.split(":") |> List.last()
     args = args |> Enum.map(&String.replace(&1, tag, old_tag))
     exec_playbook(args, true)
   end

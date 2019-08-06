@@ -92,35 +92,65 @@ defmodule Ops.Utils.KubTest do
     end
   end
 
-  test ".get_image" do
-    with_mocks([
-      {Ops.Sdk.Kub.Client, [],
-       [
-         deployment: fn _ ->
-           {:ok,
-            %{
-              "spec" => %{
-                "template" => %{
-                  "spec" => %{
-                    "containers" => [
-                      %{
-                        "image" => "ops_image",
-                        "name" => "ops"
-                      },
-                      %{
-                        "image" => "kube_image",
-                        "name" => "kube"
-                      }
-                    ]
+  describe ".get_image" do
+    test "if deployment exists" do
+      with_mocks([
+        {Ops.Sdk.Kub.Client, [],
+         [
+           deployment: fn _ ->
+             {:ok,
+              %{
+                "spec" => %{
+                  "template" => %{
+                    "spec" => %{
+                      "containers" => [
+                        %{
+                          "image" => "ops_image",
+                          "name" => "ops"
+                        },
+                        %{
+                          "image" => "kube_image",
+                          "name" => "kube"
+                        }
+                      ]
+                    }
                   }
                 }
-              }
-            }}
-         end
-       ]}
-    ]) do
-      image = Ops.Utils.Kub.get_image(%{url_params: %{base_url: "url", token: "token"}}, "ops")
-      assert image == "ops_image"
+              }}
+           end
+         ]}
+      ]) do
+        image = Ops.Utils.Kub.get_image(%{url_params: %{base_url: "url", token: "token"}}, "ops")
+        assert image == "ops_image"
+      end
+    end
+
+    test "if deployment not found" do
+      with_mocks([
+        {Ops.Sdk.Kub.Client, [],
+         [
+           deployment: fn _ ->
+             {:error,
+              %{
+                "apiVersion" => "v1",
+                "code" => 404,
+                "details" => %{
+                  "group" => "apps",
+                  "kind" => "deployments",
+                  "name" => "ops-fake"
+                },
+                "kind" => "Status",
+                "message" => "deployments.apps \"ops-fake\" not found",
+                "metadata" => %{},
+                "reason" => "NotFound",
+                "status" => "Failure"
+              }}
+           end
+         ]}
+      ]) do
+        image = Ops.Utils.Kub.get_image(%{url_params: %{base_url: "url", token: "token"}}, "ops")
+        assert is_nil(image)
+      end
     end
   end
 end

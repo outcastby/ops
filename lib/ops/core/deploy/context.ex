@@ -11,13 +11,19 @@ defmodule Ops.Deploy.Context do
   def init(env_name, tag), do: %__MODULE__{tag: tag, env_name: env_name}
 
   def current_server_state(env_name) do
-    with {:ok, args} <- build_args(env_name),
+    skip_versions = Ops.Utils.Config.settings()[:skip_versions_of_containers] || false
+
+    with :ok <- skip_versions(skip_versions),
+         {:ok, args} <- build_args(env_name),
          {:ok, image} <- server_image(args) do
       {Ops.Utils.Git.parse_tag_version(image), image |> String.split(":") |> List.last()}
     else
       _ -> {nil, nil}
     end
   end
+
+  def skip_versions(true), do: :error
+  def skip_versions(false), do: :ok
 
   def build_args(env_name) do
     case Ops.Utils.Config.settings()[:build_info][:server_path] do
