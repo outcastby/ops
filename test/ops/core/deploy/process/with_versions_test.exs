@@ -162,7 +162,7 @@ defmodule Ops.Deploy.Process.WithVersionsTest do
          [
            options: fn _ -> "" end,
            get_image: fn _, _ -> Ops.Helpers.Deploy.send_image() end,
-           get_containers: fn _, _ -> Ops.Helpers.Deploy.send_containers(containers, bad_containers) end
+           get_containers: fn _, _ -> containers ++ bad_containers end
          ]}
       ]) do
         Ops.Deploy.Process.call(context)
@@ -182,7 +182,7 @@ defmodule Ops.Deploy.Process.WithVersionsTest do
          [
            options: fn _ -> "" end,
            get_image: fn _, _ -> Ops.Helpers.Deploy.send_image() end,
-           get_containers: fn _, _ -> Ops.Helpers.Deploy.send_containers(containers, bad_containers) end
+           get_containers: fn _, _ -> containers ++ bad_containers end
          ]}
       ]) do
         Ops.Deploy.Process.call(context)
@@ -190,14 +190,14 @@ defmodule Ops.Deploy.Process.WithVersionsTest do
       end
     end
 
-    test "check ok, container crash", %{containers: containers, new_containers: new_containers, context: context} do
+    test "check ok, container started", %{new_containers: new_containers, context: context} do
       with_mocks([
         {Ops.Shells.Exec, [], [call: fn _, _, _, _ -> 0 end]},
         {Ops.Utils.Kub, [:passthrough],
          [
            options: fn _ -> "" end,
            get_image: fn _, _ -> Ops.Helpers.Deploy.send_image() end,
-           get_containers: fn _, _ -> Ops.Helpers.Deploy.send_containers(containers, new_containers, true) end
+           get_containers: fn _, _ -> new_containers end
          ]}
       ]) do
         Ops.Deploy.Process.call(context)

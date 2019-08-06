@@ -66,7 +66,7 @@ defmodule Ops.Deploy.Process.CommonTest do
               "reason" => "ContainersNotReady",
               "status" => "True",
               "type" => "ContainersReady"
-            },
+            }
           ],
           "containerStatuses" => [
             %{
@@ -107,7 +107,7 @@ defmodule Ops.Deploy.Process.CommonTest do
       with_mocks([
         {Ops.Shells.Exec, [], [call: fn _, _, _, _ -> 100 end, process_exit: fn _ -> "" end]},
         {Ops.Utils.Kub, [:passthrough],
-          [options: fn _ -> "" end, get_image: fn _, _ -> "image" end, get_containers: fn _, _ -> [] end]}
+         [options: fn _ -> "" end, get_image: fn _, _ -> "image" end, get_containers: fn _, _ -> [] end]}
       ]) do
         Ops.Deploy.Process.call(%{args: [], env_name: "uat", version: nil})
         assert called(Ops.Deploy.SendSlackNotification.call(:_, :fail))
@@ -118,40 +118,56 @@ defmodule Ops.Deploy.Process.CommonTest do
       with_mocks([
         {Ops.Shells.Exec, [], [call: fn _, _, _, _ -> 0 end]},
         {Ops.Utils.Kub, [:passthrough],
-          [options: fn _ -> "" end, get_image: fn _, _ -> "image" end, get_containers: fn _, _ -> [] end]}
+         [options: fn _ -> "" end, get_image: fn _, _ -> "image" end, get_containers: fn _, _ -> [] end]}
       ]) do
         Ops.Deploy.Process.call(%{args: [], env_name: "uat", version: nil})
         assert called(Ops.Deploy.SendSlackNotification.call(:_, :after))
       end
     end
 
-    test "check fail, container crash", %{containers: containers, bad_containers: bad_containers, context: context} do
+    test "check fail, containers crashes", %{containers: containers, bad_containers: bad_containers, context: context} do
       with_mocks([
         {Ops.Shells.Exec, [], [call: fn _, _, _, _ -> 0 end]},
         {Ops.Utils.Kub, [:passthrough],
-          [
-            options: fn _ -> "" end,
-            get_image: fn _, _ -> Ops.Helpers.Deploy.send_image() end,
-            get_containers: fn _, _ -> Ops.Helpers.Deploy.send_containers(containers, bad_containers) end
-          ]}
+         [
+           options: fn _ -> "" end,
+           get_image: fn _, _ -> Ops.Helpers.Deploy.send_image() end,
+           get_containers: fn _, _ -> containers ++ bad_containers end
+         ]}
       ]) do
         Ops.Deploy.Process.call(context)
         assert called(Ops.Deploy.SendSlackNotification.call(:_, :fail))
       end
     end
 
-    test "check ok, container crash", %{containers: containers, new_containers: new_containers, context: context} do
+    test "check ok, containers started", %{new_containers: new_containers, context: context} do
       with_mocks([
         {Ops.Shells.Exec, [], [call: fn _, _, _, _ -> 0 end]},
         {Ops.Utils.Kub, [:passthrough],
-          [
-            options: fn _ -> "" end,
-            get_image: fn _, _ -> Ops.Helpers.Deploy.send_image() end,
-            get_containers: fn _, _ -> Ops.Helpers.Deploy.send_containers(containers, new_containers, true) end
-          ]}
+         [
+           options: fn _ -> "" end,
+           get_image: fn _, _ -> Ops.Helpers.Deploy.send_image() end,
+           get_containers: fn _, _ -> new_containers end
+         ]}
       ]) do
         Ops.Deploy.Process.call(context)
         assert called(Ops.Deploy.SendSlackNotification.call(:_, :after))
+      end
+    end
+
+    test "check fail, first deploy or prev image not found", %{bad_containers: bad_containers, context: context} do
+      with_mocks([
+        {Ops.Shells.Exec, [], [call: fn _, _, _, _ -> 0 end]},
+        {Ops.Shells.Exec, [], [call: fn _, _, _ -> 0 end]},
+        {Ops.Utils.Kub, [:passthrough],
+         [
+           options: fn _ -> "" end,
+           get_image: fn _, _ -> Ops.Helpers.Deploy.send_image(nil) end,
+           get_containers: fn _, _ -> bad_containers end
+         ]}
+      ]) do
+        Ops.Deploy.Process.call(context)
+        assert called(Ops.Deploy.SendSlackNotification.call(:_, :fail))
       end
     end
   end
@@ -163,17 +179,17 @@ defmodule Ops.Deploy.Process.CommonTest do
         {Ops.Shells.Exec, [], [call: fn _, _, _ -> 0 end]},
         {Ops.Utils.Kub, [:passthrough], [get_containers: fn _, _ -> containers ++ bad_containers end]}
       ]) do
-        info = %{old_containers: containers, options: "", name: "ops"}
+        info = %{image: "feature-before", options: "", name: "ops"}
         Ops.Deploy.Process.containers_restarted?(context, info)
         assert called(Ops.Deploy.SendSlackNotification.call(:_, :fail))
       end
     end
 
-    test "check containers is restarted", %{containers: containers, new_containers: new_containers} do
+    test "check containers is restarted", %{new_containers: new_containers} do
       with_mocks([
         {Ops.Utils.Kub, [:passthrough], [get_containers: fn _, _ -> new_containers end]}
       ]) do
-        info = %{old_containers: containers, options: "", name: "ops"}
+        info = %{image: "feature-before", options: "", name: "ops"}
         Ops.Deploy.Process.containers_restarted?(%{env_name: "uat"}, info)
 
         assert called(Ops.Deploy.SendSlackNotification.call(:_, :after))

@@ -42,6 +42,7 @@ config :my_app, :ops, [
   available_environments: ["staging", "uat", "prod", "stable"],
   auto_build_branches: ["develop", "dev", "master", "release", "hotfix"],
   do_access_token: "token",
+  skip_versions_of_containers: true
 ]
 ```
 
@@ -58,6 +59,7 @@ Description params:
 - slack[token] - token for slack, if you want send notification of start and end deploy
 - slack[channel] - slack channel, where messages are sent
 - check_restart_timeout - [OPTIONAL (default 30s)] timeout between get list containers(pods)
+- skip_versions_of_containers - [OPTIONAL (default false)] skip logic create containers with prev and current versions, available only current version
 
 #### Examples
 

@@ -1,5 +1,6 @@
 defmodule Ops.Utils.Kub do
   require IEx
+  require Logger
 
   def options(env_name), do: %{url_params: %{base_url: get_url(env_name), token: get_token(env_name)}}
 
@@ -45,17 +46,23 @@ defmodule Ops.Utils.Kub do
   end
 
   def get_image(options, name) do
-    options
-    |> put_in([:url_params, :name], name)
-    |> base_request()
-    |> Ops.Sdk.Kub.Client.deployment()
-    |> handle_ok_response()
-    |> get_in(["spec", "template", "spec", "containers"])
-    |> find_container_image(name)
+    case options
+         |> put_in([:url_params, :name], name)
+         |> base_request()
+         |> Ops.Sdk.Kub.Client.deployment()
+         |> handle_ok_response() do
+      nil -> nil
+      result -> result |> get_in(["spec", "template", "spec", "containers"]) |> find_container_image(name)
+    end
   end
 
   def find_container_image(containers, name),
     do: containers |> Enum.find(&(&1["name"] == name)) |> get_in(["image"])
 
   def handle_ok_response({:ok, result}), do: result
+
+  def handle_ok_response({:error, result}) do
+    Logger.warn("Kubernetes response return error, result #{inspect(result)}")
+    nil
+  end
 end
