@@ -56,7 +56,7 @@ defmodule Ops.Deploy.ContextTest do
                ],
                available_environments: ["staging", "uat", "prod", "stable"],
                auto_build_branches: ["develop", "dev", "master", "release", "hotfix"],
-               do_access_token: "token"
+               do_configuration: [access_token: "token"]
              ]
            end
          ]},
@@ -100,7 +100,7 @@ defmodule Ops.Deploy.ContextTest do
                ],
                available_environments: ["staging", "uat", "prod", "stable"],
                auto_build_branches: ["develop", "dev", "master", "release", "hotfix"],
-               do_access_token: "token"
+               do_configuration: [access_token: "token"]
              ]
            end
          ]},
@@ -133,7 +133,7 @@ defmodule Ops.Deploy.ContextTest do
                ],
                available_environments: ["staging", "uat", "prod", "stable"],
                auto_build_branches: ["develop", "dev", "master", "release", "hotfix"],
-               do_access_token: "token",
+               do_configuration: [access_token: "token"],
                skip_versions_of_containers: true
              ]
            end

@@ -3,7 +3,7 @@ defmodule Ops.Sdk.Do.Client do
 
   def prepare_headers(headers) do
     token = Ops.Sdk.Do.Config.data().access_token
-    unless token, do: raise("Parameter 'do_access_token', must be set")
+    unless token, do: raise("Parameter '[:do_configuration][:access_token]', must be set")
     [Authorization: "Bearer " <> token] ++ headers
   end
 end
