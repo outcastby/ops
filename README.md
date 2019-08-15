@@ -7,6 +7,8 @@ Used for build docker containers, check commit messsage for start commands autom
 1. Ansible
 2. Docker
 3. Kubernetes
+4. aws cli (If you use amazon, see https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)
+5. eksctl cli (If you use amazon, see https://docs.aws.amazon.com/eks/latest/userguide/getting-started-eksctl.html)
 
 ## Installation
 
@@ -41,8 +43,24 @@ config :my_app, :ops, [
   check_restart_timeout: 30,
   available_environments: ["staging", "uat", "prod", "stable"],
   auto_build_branches: ["develop", "dev", "master", "release", "hotfix"],
-  do_access_token: "token",
-  skip_versions_of_containers: true
+  skip_versions_of_containers: true,
+  path_to_cluster_cert: "tmp",
+  prefix_for_clusters: "gm",
+  aws_configuration: [
+    region: "us-east-1",
+    nodes_type: "c5.large",
+    nodes_size: 2,
+    nodes_min_size: 2,
+    nodes_max_size: 2
+  ],
+  do_configuration: [
+    access_token: "token",
+    region: "fra1",
+    nodes_type: "s-2vcpu-4gb",
+    nodes_size: 2,
+    manager_type: "s-1vcpu-2gb",
+    cluster_version: "1.14.5-do.0"
+  ]
 ]
 ```
 
@@ -55,11 +73,24 @@ Description params:
 - build_info[server_path] - path on server for file info (example, https://example.com/info), used for start many versions of backend
 - available_environments - available environments for deploy on this environment server
 - auto_build_branches - branches which create docker build automatically
-- do_access_token - token for digital ocean(if use do cluster)
 - slack[token] - token for slack, if you want send notification of start and end deploy
 - slack[channel] - slack channel, where messages are sent
 - check_restart_timeout - [OPTIONAL (default 30s)] timeout between get list containers(pods)
 - skip_versions_of_containers - [OPTIONAL (default false)] skip logic create containers with prev and current versions, available only current version
+- prefix_for_clusters - [OPTIONAL (default gm)] prefix of name for cluster
+- path_to_cluster_cert - [OPTIONAL (default tmp)] path to cluster kube config file
+- do_configuration[access_token] - token for digital ocean(if use do cluster)
+- do_configuration[region] - [OPTIONAL (default fra1)] cluster region
+- do_configuration[nodes_type] - [OPTIONAL (default s-2vcpu-4gb)] type of worker nodes
+- do_configuration[nodes_size] - [OPTIONAL (default 2)] count of worker nodes
+- do_configuration[manager_type] - [OPTIONAL (default s-1vcpu-2gb)] type of manager node
+- do_configuration[cluster_version] - [OPTIONAL (default 1.14.5-do.0)] version of kubernetes cluster, set this parameter if a version is expired
+- aws_configuration[region] - [OPTIONAL (default like in aws client)] cluster region
+- aws_configuration[nodes_type] - [OPTIONAL (default c5.large)] type of worker nodes
+- aws_configuration[nodes_size] - [OPTIONAL (default 2)] count of worker nodes
+- aws_configuration[nodes_min_size] - [OPTIONAL (default 2)] count of worker nodes min size
+- aws_configuration[nodes_max_size] - [OPTIONAL (default 2)] count of worker nodes max size
+- aws_configuration[nodes_max_size] - [OPTIONAL (default 2)] count of worker nodes max size
 
 #### Examples
 

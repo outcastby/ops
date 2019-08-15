@@ -80,7 +80,7 @@ defmodule Mix.Tasks.Ops.DeployTest do
                ],
                available_environments: ["staging", "uat", "prod", "stable"],
                auto_build_branches: ["develop", "dev", "master", "release", "hotfix"],
-               do_access_token: "token"
+               do_configuration: [access_token: "token"]
              ]
            end
          ]},
