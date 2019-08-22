@@ -53,6 +53,10 @@ defmodule Mix.Tasks.Ops.Do.Provision do
         find balancer by IP for current environment (ip from previous item), click More -> Edit settings -> Set Proxy Protocol to 'enabled'
 
         kubectl --kubeconfig=\"tmp/#{env_name}-kubeconfig.yml\" apply -f devops/k8s/ingress/ingress-nginx-config-map.yml
+
+        And uncomment annotation for proxy in \"tmp/#{env_name}-load-balancer.yml\" and apply this file
+
+        kubectl --kubeconfig=\"tmp/#{env_name}-kubeconfig.yml\" apply -f tmp/#{env_name}-load-balancer.yml
 ")
   end
 
@@ -90,6 +94,8 @@ defmodule Mix.Tasks.Ops.Do.Provision do
       labels:
         app.kubernetes.io/name: ingress-nginx
         app.kubernetes.io/part-of: ingress-nginx
+      #annotations:
+        #service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol: "true"
     spec:
       externalTrafficPolicy: Local
       type: LoadBalancer
