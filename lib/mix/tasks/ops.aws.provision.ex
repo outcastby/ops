@@ -179,13 +179,9 @@ defmodule Mix.Tasks.Ops.Aws.Provision do
       "inventory",
       "provision.yml",
       "--extra-vars",
-      "
-      env_name=#{env_name}
-      dir_path=#{dir_path}
-      cluster_name=#{cluster_name}
-      endpoint=#{endpoint}
-      certificate_authority=#{certificate_authority}
-      "
+      "env_name=#{env_name} dir_path=#{dir_path} cluster_name=#{cluster_name} endpoint=#{endpoint} certificate_authority=#{
+        certificate_authority
+      }"
     ]
 
     "ansible-playbook" |> System.find_executable() |> Ops.Shells.Exec.call(args, [{:line, 4096}])

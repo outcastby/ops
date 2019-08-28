@@ -66,10 +66,7 @@ defmodule Mix.Tasks.Ops.Do.Provision do
       "inventory",
       "provision.yml",
       "--extra-vars",
-      "
-      env_name=#{env_name}
-      dir_path=#{dir_path}
-      "
+      "env_name=#{env_name} dir_path=#{dir_path}"
     ]
 
     "ansible-playbook" |> System.find_executable() |> Ops.Shells.Exec.call(args, [{:line, 4096}])
