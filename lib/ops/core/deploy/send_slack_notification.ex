@@ -13,7 +13,7 @@ defmodule Ops.Deploy.SendSlackNotification do
     }
   end
 
-  def get_initiator, do: "Initiator '#{Ops.Shells.System.call("whoami")}'"
+  def get_initiator, do: "Initiator #{Ops.Shells.System.call("whoami")}"
 
   def call(context, type) do
     Ops.Utils.Config.settings()[:slack] |> send(context, type)
