@@ -2,12 +2,18 @@ defmodule Ops.Deploy.SendSlackNotification do
   def messages(env_name, tag) do
     %{
       before:
-        ":warning: :warning: :warning: #{env_name} => #{Mix.Project.config()[:app]} => #{tag} => START DEPLOY :no_pedestrians:",
+        ":warning: :warning: :warning: #{env_name} => #{Mix.Project.config()[:app]} => #{tag} => START DEPLOY => #{
+          get_initiator()
+        } :no_pedestrians:",
       after:
-        ":rocket: :rocket: :rocket: #{env_name} => #{Mix.Project.config()[:app]} => #{tag} => DELIVERED :muscle_left_anim: :deda: :muscle_right_anim:",
+        ":rocket: :rocket: :rocket: #{env_name} => #{Mix.Project.config()[:app]} => #{tag} => DELIVERED => #{
+          get_initiator()
+        } :muscle_left_anim: :deda: :muscle_right_anim:",
       fail: ":bangbang: :bangbang: :bangbang: #{env_name} => #{Mix.Project.config()[:app]} => #{tag} => DEPLOY FAILED"
     }
   end
+
+  def get_initiator, do: "Initiator '#{Ops.Shells.System.call("whoami")}'"
 
   def call(context, type) do
     Ops.Utils.Config.settings()[:slack] |> send(context, type)
