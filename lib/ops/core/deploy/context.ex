@@ -14,8 +14,8 @@ defmodule Ops.Deploy.Context do
     skip_versions = Ops.Utils.Config.settings()[:skip_versions_of_containers] || false
 
     with :ok <- skip_versions(skip_versions),
-         {:ok, args} <- build_args(env_name),
-         {:ok, image} <- server_image(args) do
+         {:ok, path} <- build_args(env_name),
+         {:ok, image} <- server_image(path) do
       {Ops.Utils.Git.parse_tag_version(image), image |> String.split(":") |> List.last()}
     else
       _ -> {nil, nil}
@@ -32,8 +32,8 @@ defmodule Ops.Deploy.Context do
     end
   end
 
-  def server_image(args) do
-    case "curl" |> System.find_executable() |> Ops.Shells.System.call(args) do
+  def server_image(path) do
+    case "curl" |> System.find_executable() |> Ops.Shells.System.call([path]) do
       nil -> :error
       response -> {:ok, Jason.decode!(response)["image"]["name"]}
     end
