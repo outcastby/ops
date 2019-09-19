@@ -30,7 +30,7 @@ defmodule Mix.Tasks.Ops.DeployTest do
                  "inventory",
                  "playbook.yml",
                  "--extra-vars",
-                 "env_name=uat image_tag=develop-test version= prev_image_tag= prev_version=",
+                 "env_name=uat image_tag=develop-test version= prev_image_tag= prev_version= image_repository=my_company/repo_name",
                  "--skip-tags",
                  "fetch,release"
                ]
@@ -51,7 +51,7 @@ defmodule Mix.Tasks.Ops.DeployTest do
                  "inventory",
                  "playbook.yml",
                  "--extra-vars",
-                 "env_name=uat image_tag=develop-test version= prev_image_tag= prev_version=",
+                 "env_name=uat image_tag=develop-test version= prev_image_tag= prev_version= image_repository=my_company/repo_name",
                  "--skip-tags",
                  "fetch,release,job"
                ]
@@ -106,7 +106,7 @@ defmodule Mix.Tasks.Ops.DeployTest do
                    "inventory",
                    "playbook.yml",
                    "--extra-vars",
-                   "env_name=prod image_tag=master-v0.2.0 version=v0.2 prev_image_tag=master-v0.1.0 prev_version=v0.1",
+                   "env_name=prod image_tag=master-v0.2.0 version=v0.2 prev_image_tag=master-v0.1.0 prev_version=v0.1 image_repository=my_company/repo_name",
                    "--skip-tags",
                    "fetch"
                  ]
