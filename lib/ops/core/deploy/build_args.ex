@@ -2,17 +2,15 @@ defmodule Ops.Deploy.BuildArgs do
   def call(context, is_fast) do
     %{version: version, prev_version: prev_version, tag: tag, prev_tag: prev_tag, env_name: env_name} = context
 
-    args =
-      [
-        "-i",
-        "inventory",
-        "playbook.yml",
-        "--extra-vars",
-        "env_name=#{env_name} image_tag=#{tag} version=#{version} prev_image_tag=#{prev_tag} prev_version=#{
-          prev_version
-        }"
-      ]
-      |> skip_tags(context, is_fast)
+    envs = [
+      "env_name=#{env_name}",
+      "image_tag=#{tag}",
+      "version=#{version}",
+      "prev_version=#{prev_version}",
+      "image_repository=#{Ops.Utils.Config.lookup_image_repository()}}"
+    ]
+
+    args = ["-i", "inventory", "playbook.yml", "--extra-vars", Enum.join(envs, " ")] |> skip_tags(context, is_fast)
 
     %{context | args: args}
   end
