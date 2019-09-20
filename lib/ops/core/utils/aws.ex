@@ -2,11 +2,16 @@ defmodule Ops.Utils.Aws do
   require IEx
   require Logger
 
-  @region Ops.Utils.Config.settings()[:aws_configuration][:region]
-  @nodes_type Ops.Utils.Config.settings()[:aws_configuration][:nodes_type] || "t3.medium"
-  @nodes_size Ops.Utils.Config.settings()[:aws_configuration][:nodes_size] || "2"
-  @nodes_min_size Ops.Utils.Config.settings()[:aws_configuration][:nodes_min_size] || "2"
-  @nodes_max_size Ops.Utils.Config.settings()[:aws_configuration][:nodes_max_size] || "2"
+  @nodes_type "t3.medium"
+  @nodes_size "2"
+  @nodes_min_size "2"
+  @nodes_max_size "2"
+
+  def region(), do: Ops.Utils.Config.settings()[:aws_configuration][:region]
+  def nodes_type(), do: Ops.Utils.Config.settings()[:aws_configuration][:nodes_type] || @nodes_type
+  def nodes_size(), do: Ops.Utils.Config.settings()[:aws_configuration][:nodes_size] || @nodes_size
+  def nodes_min_size(), do: Ops.Utils.Config.settings()[:aws_configuration][:nodes_min_size] || @nodes_min_size
+  def nodes_max_size(), do: Ops.Utils.Config.settings()[:aws_configuration][:nodes_max_size] || @nodes_max_size
 
   def cmd(args) do
     case "aws" |> System.find_executable() |> Ops.Shells.System.call(args) do
@@ -36,18 +41,18 @@ defmodule Ops.Utils.Aws do
       "--nodegroup-name",
       name,
       "--node-type",
-      @nodes_type,
+      nodes_type(),
       "--nodes",
-      @nodes_size,
+      nodes_size(),
       "--nodes-min",
-      @nodes_min_size,
+      nodes_min_size(),
       "--nodes-max",
-      @nodes_max_size,
+      nodes_max_size(),
       "--node-ami",
       "auto"
     ]
 
-    args = if @region, do: args ++ ["--region", @region], else: args
+    args = if region(), do: args ++ ["--region", region()], else: args
 
     "eksctl"
     |> System.find_executable()

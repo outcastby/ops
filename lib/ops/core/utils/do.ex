@@ -3,23 +3,30 @@ defmodule Ops.Utils.Do do
   require Logger
   alias Ops.Utils.Io
 
-  @prefix Ops.Utils.Config.settings()[:prefix_for_clusters] || "gm"
-  @region Ops.Utils.Config.settings()[:do_configuration][:region] || "fra1"
-  @nodes_type Ops.Utils.Config.settings()[:do_configuration][:nodes_type] || "s-2vcpu-4gb"
-  @nodes_size Ops.Utils.Config.settings()[:do_configuration][:nodes_size] || 2
-  @manager_type Ops.Utils.Config.settings()[:do_configuration][:manager_type] || "s-1vcpu-2gb"
-  @cluster_version Ops.Utils.Config.settings()[:do_configuration][:cluster_version] || "1.14.5-do.0"
+  @prefix "gm"
+  @region "fra1"
+  @nodes_type "s-2vcpu-4gb"
+  @nodes_size 2
+  @manager_type "s-1vcpu-2gb"
+  @cluster_version "1.14.5-do.0"
+
+  def prefix(), do: Ops.Utils.Config.settings()[:prefix_for_clusters] || @prefix
+  def region(), do: Ops.Utils.Config.settings()[:do_configuration][:region] || @region
+  def nodes_type(), do: Ops.Utils.Config.settings()[:do_configuration][:nodes_type] || @nodes_type
+  def nodes_size(), do: Ops.Utils.Config.settings()[:do_configuration][:nodes_size] || @nodes_size
+  def manager_type(), do: Ops.Utils.Config.settings()[:do_configuration][:manager_type] || @manager_type
+  def cluster_version(), do: Ops.Utils.Config.settings()[:do_configuration][:cluster_version] || @cluster_version
 
   def create_cluster(env_name) do
     request = %Sdk.Request{
       payload: %{
-        name: "#{@prefix}-#{env_name}",
-        region: @region,
-        version: @cluster_version,
+        name: "#{prefix()}-#{env_name}",
+        region: region(),
+        version: cluster_version(),
         tags: [env_name],
         node_pools: [
-          %{size: @nodes_type, count: @nodes_size, name: "#{env_name}-worker", tags: ["servers", "worker"]},
-          %{size: @manager_type, count: 1, name: "manager", tags: ["manager"]}
+          %{size: nodes_type(), count: nodes_size(), name: "#{env_name}-worker", tags: ["servers", "worker"]},
+          %{size: manager_type(), count: 1, name: "manager", tags: ["manager"]}
         ]
       }
     }
