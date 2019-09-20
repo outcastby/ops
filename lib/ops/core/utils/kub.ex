@@ -46,6 +46,8 @@ defmodule Ops.Utils.Kub do
   end
 
   def get_image(options, name) do
+    name = String.replace(name, "_", "-")
+
     case options
          |> put_in([:url_params, :name], name)
          |> base_request()

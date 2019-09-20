@@ -89,7 +89,7 @@ defmodule Ops.Deploy.Process.WithVersionsTest do
               "reason" => "ContainersNotReady",
               "status" => "True",
               "type" => "ContainersReady"
-            },
+            }
           ],
           "containerStatuses" => [
             %{

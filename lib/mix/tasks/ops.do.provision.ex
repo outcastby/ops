@@ -32,14 +32,13 @@ defmodule Mix.Tasks.Ops.Do.Provision do
         arcade.#{env_name}
         admin.arcade.#{env_name}
 
-      # 3. Lambda. Add new object to environments. https://console.aws.amazon.com/lambda/home?region=us-east-1#/functions/as3-do-kub?tab=graph
+      # 3. Lambda. Add new object to environments. https://console.aws.amazon.com/lambda/home
       # Dont forget to save and test new lambda script
 
         {\"name\": \"#{env_name}\", \"cluster_id\": \"#{cluster_id}\"},
 
 
-      # 4. Complete setup letsencrypt
-
+      # 4. Complete setup letsencrypt (Correct path to your prod_issuer.yml)
         KUBECONFIG=#{dir_path}/tmp/#{env_name}-kubeconfig.yml helm install --name cert-manager --namespace kube-system stable/cert-manager --version v0.5.2
         kubectl --kubeconfig=\"tmp/#{env_name}-kubeconfig.yml\" create -f devops/k8s/letsencrypt/prod_issuer.yml
 
@@ -60,15 +59,8 @@ defmodule Mix.Tasks.Ops.Do.Provision do
 ")
   end
 
-  def start_provision(%{env_name: env_name, dir_path: dir_path} = context) do
-    args = [
-      "-i",
-      "inventory",
-      "provision.yml",
-      "--extra-vars",
-      "env_name=#{env_name} dir_path=#{dir_path}"
-    ]
-
+  def start_provision(context) do
+    args = ["-i", "inventory", "provision.yml", "--extra-vars", Ops.Provisions.BuildVars.call(:do, context)]
     "ansible-playbook" |> System.find_executable() |> Ops.Shells.Exec.call(args, [{:line, 4096}])
     context
   end

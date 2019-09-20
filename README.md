@@ -29,6 +29,7 @@ config :my_app, :ops, [
   docker: [
     username:  "docker_user",
     password: "docker_pass",
+    email: "docker_email",
     image_repository: "my_company/repo_name",
     file: "config/dockerfile"
   ],
@@ -67,6 +68,7 @@ config :my_app, :ops, [
 Description params:
 - docker[username] - docker hub user (for push build)
 - docker[password] - docker hub password
+- docker[email] - docker hub email (use for create secrets, for pull private repository)
 - docker[image_repository] - docker repository name (my_company/repo_name)
 - docker[file] - path to docker file in current project (if file inside directory config 'config/dockerfile')
 - build_info[file_name] - build info file name (info about last commit and version, example build_file.json)
