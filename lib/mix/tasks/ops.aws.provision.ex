@@ -145,6 +145,7 @@ defmodule Mix.Tasks.Ops.Aws.Provision do
         #service.beta.kubernetes.io/aws-load-balancer-ssl-cert: <arn>
         # Only run SSL on the port named "https" below.
         service.beta.kubernetes.io/aws-load-balancer-ssl-ports: https
+        service.beta.kubernetes.io/aws-load-balancer-type: nlb
     spec:
       externalTrafficPolicy: Local
       type: LoadBalancer
