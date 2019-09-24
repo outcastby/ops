@@ -1,4 +1,4 @@
-defmodule Ops.Sdk.Do.Config do
+defmodule Ops.SDK.Do.Config do
   def data,
     do: %{
       base_url: "https://api.digitalocean.com/v2/kubernetes",

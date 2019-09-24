@@ -1,4 +1,4 @@
-defmodule Ops.Sdk.Slack.Config do
+defmodule Ops.SDK.Slack.Config do
   def data,
     do: %{
       base_url: "https://slack.com/api",

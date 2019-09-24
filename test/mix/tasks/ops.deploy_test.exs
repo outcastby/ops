@@ -7,9 +7,9 @@ defmodule Mix.Tasks.Ops.DeployTest do
     {Ops.Shells.Exec, [], [call: fn _, _, _, _ -> "" end]},
     {Ops.Utils.Kub, [],
      [options: fn _ -> "" end, get_image: fn _, _ -> "image" end, get_containers: fn _, _ -> [] end]},
-    {Ops.Sdk.DockerHub.Client, [], [tag_info: fn _ -> {:ok, ""} end]},
-    {Ops.Sdk.Slack.Client, [], [send: fn _ -> {:ok, ""} end]},
-    {Ops.Sdk.DockerHub.Client, [], [user_login: fn _ -> {:ok, %{"token" => "fake"}} end]},
+    {Ops.SDK.DockerHub.Client, [], [tag_info: fn _ -> {:ok, ""} end]},
+    {Ops.SDK.Slack.Client, [], [send: fn _ -> {:ok, ""} end]},
+    {Ops.SDK.DockerHub.Client, [], [user_login: fn _ -> {:ok, %{"token" => "fake"}} end]},
     {Ops.Utils.Io, [:passthrough], [puts: fn _ -> "" end]}
   ]) do
     :ok
@@ -90,7 +90,7 @@ defmodule Mix.Tasks.Ops.DeployTest do
            find_executable: fn _ -> "" end,
            get_env: fn _ -> "" end
          ]},
-        {Ops.Sdk.Slack.Client, [], [send: fn _ -> "" end]},
+        {Ops.SDK.Slack.Client, [], [send: fn _ -> "" end]},
         {String, [:passthrough], [replace: fn _, _, _ -> "" end, split: fn _, _ -> ["master-v0.1.0"] end]}
       ]) do
         result = Mix.Tasks.Ops.Deploy.run(["prod", "master-v0.2.0"])

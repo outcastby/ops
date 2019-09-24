@@ -4,8 +4,8 @@ defmodule Ops.Deploy.FindOrCreateBuildTest do
 
   test ".call" do
     with_mocks([
-      {Ops.Sdk.DockerHub.Client, [], [tag_info: fn _ -> {:ok, ""} end]},
-      {Ops.Sdk.DockerHub.Client, [], [user_login: fn _ -> {:ok, %{"token" => "fake"}} end]},
+      {Ops.SDK.DockerHub.Client, [], [tag_info: fn _ -> {:ok, ""} end]},
+      {Ops.SDK.DockerHub.Client, [], [user_login: fn _ -> {:ok, %{"token" => "fake"}} end]},
       {Ops.Utils.Io, [], [puts: fn _ -> "" end]}
     ]) do
       result =

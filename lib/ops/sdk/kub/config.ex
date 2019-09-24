@@ -1,4 +1,4 @@
-defmodule Ops.Sdk.Kub.Config do
+defmodule Ops.SDK.Kub.Config do
   def data,
     do: %{
       base_url: "",

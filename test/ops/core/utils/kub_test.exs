@@ -51,7 +51,7 @@ defmodule Ops.Utils.KubTest do
   test ".base_request" do
     request = Ops.Utils.Kub.base_request(%{url_params: %{base_url: "url", token: "token"}})
 
-    assert request == %Sdk.Request{
+    assert request == %SDK.Request{
              headers: [{"Authorization", "Bearer token"}],
              options: %{url_params: %{base_url: "url", token: "token"}}
            }
@@ -59,7 +59,7 @@ defmodule Ops.Utils.KubTest do
 
   test ".get_containers" do
     with_mocks([
-      {Ops.Sdk.Kub.Client, [],
+      {Ops.SDK.Kub.Client, [],
        [
          pods: fn _ ->
            {:ok,
@@ -95,7 +95,7 @@ defmodule Ops.Utils.KubTest do
   describe ".get_image" do
     test "if deployment exists" do
       with_mocks([
-        {Ops.Sdk.Kub.Client, [],
+        {Ops.SDK.Kub.Client, [],
          [
            deployment: fn _ ->
              {:ok,
@@ -127,7 +127,7 @@ defmodule Ops.Utils.KubTest do
 
     test "if deployment not found" do
       with_mocks([
-        {Ops.Sdk.Kub.Client, [],
+        {Ops.SDK.Kub.Client, [],
          [
            deployment: fn _ ->
              {:error,

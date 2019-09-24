@@ -1,5 +1,5 @@
-defmodule Ops.Sdk.Kub.Client do
-  use Sdk.BaseClient, endpoints: Map.keys(Ops.Sdk.Kub.Config.data().endpoints)
+defmodule Ops.SDK.Kub.Client do
+  use SDK.BaseClient, endpoints: Map.keys(Ops.SDK.Kub.Config.data().endpoints)
 
   @timeout 20_000
 

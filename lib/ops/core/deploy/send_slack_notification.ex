@@ -21,14 +21,14 @@ defmodule Ops.Deploy.SendSlackNotification do
   end
 
   def send([token: _, channel: channel], %{tag: tag, env_name: env_name}, type) do
-    payload = %Sdk.Request{
+    payload = %SDK.Request{
       payload: %{
         channel: channel,
         text: messages(env_name, tag)[type]
       }
     }
 
-    Ops.Sdk.Slack.Client.send(payload)
+    Ops.SDK.Slack.Client.send(payload)
   end
 
   def send(_, _, _), do: nil

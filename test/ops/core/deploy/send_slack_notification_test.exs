@@ -3,7 +3,7 @@ defmodule Ops.Deploy.SendSlackNotificationTest do
   import Mock
 
   test ".call" do
-    with_mock(Ops.Sdk.Slack.Client, send: fn _ -> "" end) do
+    with_mock(Ops.SDK.Slack.Client, send: fn _ -> "" end) do
       result =
         Ops.Deploy.SendSlackNotification.call(
           %Ops.Deploy.Context{

@@ -18,7 +18,7 @@ defmodule Ops.Utils.Do do
   def cluster_version(), do: Ops.Utils.Config.settings()[:do_configuration][:cluster_version] || @cluster_version
 
   def create_cluster(env_name) do
-    request = %Sdk.Request{
+    request = %SDK.Request{
       payload: %{
         name: "#{prefix()}-#{env_name}",
         region: region(),
@@ -31,7 +31,7 @@ defmodule Ops.Utils.Do do
       }
     }
 
-    response = request |> Ops.Sdk.Do.Client.create_cluster() |> handle_create()
+    response = request |> Ops.SDK.Do.Client.create_cluster() |> handle_create()
     Io.puts("Creating cluster: response is #{inspect(response)}")
 
     %{"kubernetes_cluster" => %{"id" => cluster_id}} = response
@@ -61,14 +61,14 @@ defmodule Ops.Utils.Do do
   end
 
   def get_clusters() do
-    {:ok, %{"kubernetes_clusters" => clusters}} = Ops.Sdk.Do.Client.clusters(%Sdk.Request{})
+    {:ok, %{"kubernetes_clusters" => clusters}} = Ops.SDK.Do.Client.clusters(%SDK.Request{})
     clusters
   end
 
   def get_cluster_by_id(cluster_id), do: Enum.find(get_clusters(), &(&1["id"] == cluster_id))
 
   def get_cluster_config(cluster_id) do
-    {:ok, body} = Ops.Sdk.Do.Client.cluster_config(%Sdk.Request{options: %{url_params: %{cluster_id: cluster_id}}})
+    {:ok, body} = Ops.SDK.Do.Client.cluster_config(%SDK.Request{options: %{url_params: %{cluster_id: cluster_id}}})
     body
   end
 end

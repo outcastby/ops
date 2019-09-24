@@ -1,4 +1,4 @@
-defmodule Ops.Sdk.DockerHub.Config do
+defmodule Ops.SDK.DockerHub.Config do
   def data,
     do: %{
       base_url: "https://hub.docker.com/v2",

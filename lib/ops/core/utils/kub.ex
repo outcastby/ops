@@ -34,12 +34,12 @@ defmodule Ops.Utils.Kub do
   end
 
   def base_request(%{url_params: %{token: token}} = options),
-    do: %Sdk.Request{headers: [{"Authorization", "Bearer #{token}"}], options: options}
+    do: %SDK.Request{headers: [{"Authorization", "Bearer #{token}"}], options: options}
 
   def get_containers(options, name) do
     options
     |> base_request()
-    |> Ops.Sdk.Kub.Client.pods()
+    |> Ops.SDK.Kub.Client.pods()
     |> handle_ok_response()
     |> get_in(["items"])
     |> Enum.filter(&(&1["metadata"]["labels"]["app"] == name))
@@ -51,7 +51,7 @@ defmodule Ops.Utils.Kub do
     case options
          |> put_in([:url_params, :name], name)
          |> base_request()
-         |> Ops.Sdk.Kub.Client.deployment()
+         |> Ops.SDK.Kub.Client.deployment()
          |> handle_ok_response() do
       nil -> nil
       result -> result |> get_in(["spec", "template", "spec", "containers"]) |> find_container_image(name)

@@ -3,12 +3,12 @@ defmodule Ops.Deploy.FindOrCreateBuild do
     repository = Ops.Utils.Config.lookup_image_repository()
     Ops.Utils.Io.puts("Check if build exist #{Mix.Project.config()[:app]}. Repository=#{repository} ImageTag=#{tag}")
 
-    request = %Sdk.Request{
+    request = %SDK.Request{
       headers: [{"Authorization", "JWT #{get_docker_hub_token()}"}],
       options: %{url_params: %{repository: repository, tag: tag}}
     }
 
-    case Ops.Sdk.DockerHub.Client.tag_info(request) do
+    case Ops.SDK.DockerHub.Client.tag_info(request) do
       {:ok, _} -> Ops.Utils.Io.puts("Exist ImageTag=#{tag}")
       _ -> Mix.Tasks.Ops.Build.run([tag])
     end
@@ -17,11 +17,11 @@ defmodule Ops.Deploy.FindOrCreateBuild do
   end
 
   def get_docker_hub_token() do
-    request = %Sdk.Request{
+    request = %SDK.Request{
       payload: Ops.Utils.Config.settings()[:docker] |> Enum.into(%{}) |> Map.take([:username, :password])
     }
 
-    {:ok, %{"token" => token}} = Ops.Sdk.DockerHub.Client.user_login(request)
+    {:ok, %{"token" => token}} = Ops.SDK.DockerHub.Client.user_login(request)
     token
   end
 end

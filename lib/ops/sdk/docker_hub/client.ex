@@ -1,3 +1,3 @@
-defmodule Ops.Sdk.DockerHub.Client do
-  use Sdk.BaseClient, endpoints: Map.keys(Ops.Sdk.DockerHub.Config.data().endpoints)
+defmodule Ops.SDK.DockerHub.Client do
+  use SDK.BaseClient, endpoints: Map.keys(Ops.SDK.DockerHub.Config.data().endpoints)
 end
