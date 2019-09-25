@@ -43,11 +43,11 @@ defmodule Ops.Utils.Aws do
       "--node-type",
       nodes_type(),
       "--nodes",
-      nodes_size(),
+      "#{nodes_size()}",
       "--nodes-min",
-      nodes_min_size(),
+      "#{nodes_min_size()}",
       "--nodes-max",
-      nodes_max_size(),
+      "#{nodes_max_size()}",
       "--node-ami",
       "auto"
     ]
