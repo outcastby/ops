@@ -4,7 +4,9 @@ defmodule Mix.Tasks.Ops.Aws.Provision do
   alias Ops.Utils.Io
   alias Ops.Utils.Aws
 
-  @prefix Ops.Utils.Config.settings()[:prefix_for_clusters] || "gm"
+  @prefix "gm"
+
+  def prefix(), do: Ops.Utils.Config.settings()[:prefix_for_clusters] || @prefix
 
   def run([env_name]) do
     if env_name =~ "_", do: raise("Env name should not have _ and other specific symbols")
@@ -36,7 +38,7 @@ defmodule Mix.Tasks.Ops.Aws.Provision do
       # 3. Lambda. Add new object to environments. https://console.aws.amazon.com/lambda/home
       # Dont forget to save and test new lambda script
 
-        {\"name\": \"#{env_name}\", \"cluster_name\": \"#{@prefix}-#{env_name}\"},
+        {\"name\": \"#{env_name}\", \"cluster_name\": \"#{prefix()}-#{env_name}\"},
 
 
       # 4. Complete setup letsencrypt (Correct path to your prod_issuer.yml)
@@ -64,7 +66,7 @@ defmodule Mix.Tasks.Ops.Aws.Provision do
   end
 
   def find_or_create_cluster_and_nodes(env_name) do
-    name = "#{@prefix}-#{env_name}"
+    name = "#{prefix()}-#{env_name}"
     "eksctl-#{name}-cluster" |> Aws.get_stack_by_name() |> create_cluster(name)
     env_name
   end
@@ -79,7 +81,7 @@ defmodule Mix.Tasks.Ops.Aws.Provision do
   def create_cluster(_, _), do: nil
 
   def add_context_cluster_config(env_name) do
-    name = "#{@prefix}-#{env_name}"
+    name = "#{prefix()}-#{env_name}"
     cluster = Aws.get_cluster_by_name(name)
 
     %{
