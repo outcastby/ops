@@ -14,7 +14,7 @@ defmodule Ops.Utils.Aws do
   def nodes_max_size(), do: Ops.Utils.Config.settings()[:aws_configuration][:nodes_max_size] || @nodes_max_size
 
   def cmd(args) do
-    case "aws" |> System.find_executable() |> Ops.Shells.System.call(args) do
+    case "aws" |> System.find_executable() |> Ops.Shells.System.call(enhance_by_region(args)) do
       nil -> nil
       "" -> ""
       response -> Jason.decode!(response)
@@ -52,13 +52,13 @@ defmodule Ops.Utils.Aws do
       "auto"
     ]
 
-    args = if region(), do: args ++ ["--region", region()], else: args
-
     "eksctl"
     |> System.find_executable()
-    |> Ops.Shells.Exec.call(args, [{:line, 4096}], false)
+    |> Ops.Shells.Exec.call(enhance_by_region(args), [{:line, 4096}], false)
     |> handle_status_create_cluster()
   end
+
+  defp enhance_by_region(args), do: if(region(), do: args ++ ["--region", region()], else: args)
 
   defp handle_status_create_cluster(0), do: nil
 
