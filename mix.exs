@@ -25,7 +25,7 @@ defmodule Ops.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:timex, "~> 3.1"},
+      {:timex, "~> 3.6.1"},
       {:jason, "~> 1.0"},
       {:sdk, git: "https://github.com/outcastby/sdk.git"},
       {:mock, "0.3.3", only: :test}
