@@ -47,6 +47,7 @@ config :my_app, :ops, [
   skip_versions_of_containers: true,
   path_to_cluster_cert: "tmp",
   prefix_for_clusters: "gm",
+  k8s_name: "service_or_pod_name",
   aws_configuration: [
     region: "us-east-1",
     nodes_type: "c5.large",
@@ -81,6 +82,7 @@ Description params:
 - skip_versions_of_containers - [OPTIONAL (default false)] skip logic create containers with prev and current versions, available only current version
 - prefix_for_clusters - [OPTIONAL (default gm)] prefix of name for cluster
 - path_to_cluster_cert - [OPTIONAL (default tmp)] path to cluster kube config file
+- k8s_name - [OPTIONAL (default elixir project name)] name service, pod or deployment in k8s
 - do_configuration[access_token] - token for digital ocean(if use do cluster)
 - do_configuration[region] - [OPTIONAL (default fra1)] cluster region
 - do_configuration[nodes_type] - [OPTIONAL (default s-2vcpu-4gb)] type of worker nodes

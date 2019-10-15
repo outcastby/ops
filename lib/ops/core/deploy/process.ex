@@ -20,9 +20,11 @@ defmodule Ops.Deploy.Process do
   end
 
   def get_name(context, key) do
+    name = Ops.Utils.Config.settings()[:k8s_name] || "#{Mix.Project.config()[:app]}"
+
     case Map.get(context, key) do
-      nil -> "#{Mix.Project.config()[:app]}"
-      version -> "#{Mix.Project.config()[:app]}#{String.replace(version, ".", "-")}"
+      nil -> name
+      version -> "#{name}#{String.replace(version, ".", "-")}"
     end
   end
 
