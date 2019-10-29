@@ -33,9 +33,9 @@ defmodule Ops.Deploy.Context do
   end
 
   def server_image(path) do
-    case "curl" |> System.find_executable() |> Ops.Shells.System.call([path]) do
+    case "curl" |> System.find_executable() |> Ops.Shells.System.call([path], true) do
       nil -> :error
-      response -> {:ok, Jason.decode!(response)["image"]["name"]}
+      response -> {:ok, response["image"]["name"]}
     end
   end
 end

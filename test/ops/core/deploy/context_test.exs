@@ -60,7 +60,7 @@ defmodule Ops.Deploy.ContextTest do
              ]
            end
          ]},
-        {Ops.Shells.System, [:passthrough], [call: fn _, _ -> "{\"image\": {\"name\": \"master-v0.1.0\"}}" end]},
+        {Ops.Shells.System, [:passthrough], [call: fn _, _, _ -> %{"image" => %{"name" => "master-v0.1.0"}} end]},
         {String, [:passthrough], [replace: fn _, _, _ -> "" end]}
       ]) do
         result = Ops.Deploy.Context.init("prod", "master-v0.2.0")
@@ -104,7 +104,7 @@ defmodule Ops.Deploy.ContextTest do
              ]
            end
          ]},
-        {Ops.Shells.System, [:passthrough], [call: fn _, _ -> "{\"image\": {\"name\": \"master-v0.1.0\"}}" end]}
+        {Ops.Shells.System, [:passthrough], [call: fn _, _, _ -> %{"image" => %{"name" => "master-v0.1.0"}} end]}
       ]) do
         result = Ops.Deploy.Context.current_server_state("prod")
         assert result == {"v0.1", "master-v0.1.0"}
