@@ -46,6 +46,9 @@ defmodule Mix.Tasks.Ops.Do.Provision do
         KUBECONFIG=#{dir_path}/tmp/#{env_name}-kubeconfig.yml helm install --name cert-manager --namespace cert-manager --version v0.11.0 jetstack/cert-manager
         kubectl --kubeconfig=\"tmp/#{env_name}-kubeconfig.yml\" create -f devops/k8s/letsencrypt/prod_issuer.yml
 
+        // if last command return error, use command kubectl --kubeconfig=\"tmp/#{env_name}-kubeconfig.yml\" get all -n cert-manager,
+        and wait for the container 'cert-manager-webhook-...' started
+
 
       # 5. Deploy arcade, challenge, dashboard
 

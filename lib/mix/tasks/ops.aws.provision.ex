@@ -41,10 +41,16 @@ defmodule Mix.Tasks.Ops.Aws.Provision do
         {\"name\": \"#{env_name}\", \"cluster_name\": \"#{prefix()}-#{env_name}\"},
 
 
-      # 4. Complete setup letsencrypt (Correct path to your prod_issuer.yml)
+      # 4. Complete setup letsencrypt (Correct path to your prod_issuer.yml, see https://docs.cert-manager.io/en/latest/getting-started/install/kubernetes.html)
+      kubectl --kubeconfig=\"tmp/#{env_name}-kubeconfig.yml\" apply --validate=false -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.11/deploy/manifests/00-crds.yaml
+      kubectl --kubeconfig=\"tmp/#{env_name}-kubeconfig.yml\" create namespace cert-manager
+      KUBECONFIG=#{dir_path}/tmp/#{env_name}-kubeconfig.yml helm repo add jetstack https://charts.jetstack.io
+      KUBECONFIG=#{dir_path}/tmp/#{env_name}-kubeconfig.yml helm repo update
+      KUBECONFIG=#{dir_path}/tmp/#{env_name}-kubeconfig.yml helm install --name cert-manager --namespace cert-manager --version v0.11.0 jetstack/cert-manager
+      kubectl --kubeconfig=\"tmp/#{env_name}-kubeconfig.yml\" create -f devops/k8s/letsencrypt/prod_issuer.yml
 
-        KUBECONFIG=#{dir_path}/tmp/#{env_name}-kubeconfig.yml helm install --name cert-manager --namespace kube-system stable/cert-manager --version v0.5.2
-        kubectl --kubeconfig=\"tmp/#{env_name}-kubeconfig.yml\" create -f devops/k8s/letsencrypt/prod_issuer.yml
+      !!! If last command return error, use command kubectl --kubeconfig=\"tmp/#{env_name}-kubeconfig.yml\" get all -n cert-manager,
+      and wait for the container 'cert-manager-webhook-...' started
 
 
       # 5. Deploy arcade, challenge, dashboard
